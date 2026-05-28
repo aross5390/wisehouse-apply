@@ -288,23 +288,23 @@ async function submitApp() {
 
   // Fire Zapier webhook instantly
   try {
+    const webhookData = new URLSearchParams({
+      name:         candidate.name || '',
+      email:        candidate.email || '',
+      phone:        candidate.phone || '',
+      role:         candidate.role || '',
+      source:       candidate.source || '',
+      comp:         candidate.comp || '',
+      availability: candidate.availability || '',
+      video:        candidate.video || '',
+      stage:        'Applied',
+      score:        'Pending',
+      added:        candidate.added || '',
+      platform_url: 'https://recruiting.wisehousebugs.com'
+    });
     await fetch('https://hooks.zapier.com/hooks/catch/21681276/4b2u597/', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name:         candidate.name || '',
-        email:        candidate.email || '',
-        phone:        candidate.phone || '',
-        role:         candidate.role || '',
-        source:       candidate.source || '',
-        comp:         candidate.comp || '',
-        availability: candidate.availability || '',
-        video:        candidate.video || '',
-        stage:        'Applied',
-        score:        'Pending',
-        added:        candidate.added || '',
-        platform_url: 'https://recruiting.wisehousebugs.com'
-      })
+      body: webhookData
     });
   } catch(e) { console.error('Webhook error:', e); }
 
