@@ -284,11 +284,32 @@ async function submitApp() {
       mode: 'no-cors',
       body: JSON.stringify({ action: 'add', ...candidate }),
     });
-  } catch(e) {
-    console.error('Sheet error:', e);
-  }
+  } catch(e) { console.error('Sheet error:', e); }
 
-  // Step 2: Show success right away — don't wait for AI scoring
+  // Fire Zapier webhook instantly
+  try {
+    await fetch('https://hooks.zapier.com/hooks/catch/21681276/4b2u597/', {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name:         candidate.name || '',
+        email:        candidate.email || '',
+        phone:        candidate.phone || '',
+        role:         candidate.role || '',
+        source:       candidate.source || '',
+        comp:         candidate.comp || '',
+        availability: candidate.availability || '',
+        video:        candidate.video || '',
+        stage:        'Applied',
+        score:        'Pending',
+        added:        candidate.added || '',
+        platform_url: 'https://recruiting.wisehousebugs.com'
+      })
+    });
+  } catch(e) { console.error('Webhook error:', e); }
+
+  // Show success
   document.getElementById('form-wrap').style.display = 'none';
   document.getElementById('success-screen').style.display = 'block';
   window.scrollTo(0, 0);
