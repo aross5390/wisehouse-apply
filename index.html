@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apply — Wise House Pest Control</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0D1117;--surf:#161B22;--surf2:#1C2330;--bdr:#2A3441;--tx:#E6EDF3;--tx2:#8B949E;--tx3:#6E7681;--blue:#2563EB;--blue-bg:rgba(37,99,235,0.12);--blue-bdr:rgba(37,99,235,0.3);--green:#16A34A;--green-bg:rgba(22,163,74,0.12);--green-bdr:rgba(22,163,74,0.3);--red:#DC2626;--r:8px;--rl:12px}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;padding:0}
+.header{background:var(--surf);border-bottom:1px solid var(--bdr);padding:16px 24px;display:flex;align-items:center;gap:12px}
+.header img{width:36px;height:36px;border-radius:8px}
+.header-brand{font-size:15px;font-weight:600}
+.header-sub{font-size:11px;color:var(--tx3);margin-top:1px}
+.hero{background:linear-gradient(135deg,#0D1117 0%,#1a2744 100%);padding:40px 24px;text-align:center;border-bottom:1px solid var(--bdr)}
+.hero h1{font-size:26px;font-weight:600;margin-bottom:8px}
+.hero p{font-size:14px;color:var(--tx2);max-width:480px;margin:0 auto;line-height:1.6}
+.container{max-width:640px;margin:0 auto;padding:32px 20px 60px}
+.card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rl);padding:24px;margin-bottom:16px}
+.card-title{font-size:13px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--bdr)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:520px){.form-row{grid-template-columns:1fr}}
+.fg{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.fg:last-child{margin-bottom:0}
+.fg label{font-size:12px;font-weight:500;color:var(--tx2)}
+.req{color:var(--red)}
+.fg input,.fg select,.fg textarea{background:var(--surf2);border:1px solid var(--bdr);border-radius:var(--r);padding:10px 12px;color:var(--tx);font-size:13px;font-family:'DM Sans',sans-serif;width:100%;transition:border-color 0.1s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-bg)}
+.fg select option{background:var(--surf2)}
+.fg textarea{resize:vertical;min-height:90px;line-height:1.6}
+.hint{font-size:11px;color:var(--tx3);margin-top:3px;line-height:1.5}
+.submit-btn{width:100%;padding:14px;background:var(--blue);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.1s;margin-top:8px}
+.submit-btn:hover{background:#1D4ED8}
+.submit-btn:disabled{background:#334155;cursor:not-allowed}
+.success-screen{display:none;text-align:center;padding:48px 24px}
+.success-icon{font-size:52px;margin-bottom:16px}
+.success-title{font-size:22px;font-weight:600;margin-bottom:8px}
+.success-sub{font-size:14px;color:var(--tx2);line-height:1.6;max-width:400px;margin:0 auto}
+.error-b{background:rgba(220,38,38,0.12);border:1px solid rgba(220,38,38,0.3);border-radius:var(--r);padding:10px 14px;font-size:13px;color:#FCA5A5;margin-bottom:14px;display:none}
+.thinking{display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;background:var(--blue-bg);border:1px solid var(--blue-bdr);border-radius:var(--r);font-size:13px;color:#93C5FD;margin-top:12px;display:none}
+.spin{width:16px;height:16px;border:2px solid var(--blue-bdr);border-top-color:var(--blue);border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.role-pill{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;margin:3px;cursor:pointer;border:1px solid var(--bdr);background:var(--surf2);color:var(--tx2);transition:all 0.1s}
+.role-pill.selected{background:var(--blue);color:#fff;border-color:var(--blue)}
+.roles-wrap{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="header">
+  <img src="data:image/png;base64,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" alt="Wise House">
+  <div><div class="header-brand">Wise House Pest Control</div><div class="header-sub">Career Application</div></div>
+</div>
+<div class="hero">
+  <h1>Join the Wise House Team</h1>
+  <p>We don't just hire people, we build careers. Tell us who you are and what you bring to the table. The right opportunity could be one form away.</p>
+</div>
+<div class="container">
+  <div id="form-wrap">
+    <div class="error-b" id="err-b">Something went wrong. Please try again.</div>
+
+    <div class="card">
+      <div class="card-title">Which role are you applying for?</div>
+      <div class="roles-wrap" id="roles-wrap">
+        <div class="role-pill" onclick="selectRole(this,'Pest Control Technician')">Pest Control Technician</div>
+        <div class="role-pill" onclick="selectRole(this,'Outbound Sales Rep')">Outbound Sales Rep</div>
+        <div class="role-pill" onclick="selectRole(this,'CSR / Admin Support')">CSR / Admin Support</div>
+        <div class="role-pill" onclick="selectRole(this,'Video Editor')">Video Editor</div>
+        <div class="role-pill" onclick="selectRole(this,'AI Implementation Specialist')">AI Implementation Specialist</div>
+      </div>
+      <input type="hidden" id="f-role">
+    </div>
+
+    <div class="card">
+      <div class="card-title">Personal Information</div>
+      <div class="form-row">
+        <div class="fg"><label>Full Name <span class="req">*</span></label><input id="f-name" placeholder="Your full name"></div>
+        <div class="fg"><label>Email <span class="req">*</span></label><input id="f-email" type="email" placeholder="your@email.com"></div>
+        <div class="fg"><label>Phone Number</label><input id="f-phone" placeholder="+1 555 000 0000"></div>
+        <div class="fg"><label>Where did you find this job? <span class="req">*</span></label>
+          <select id="f-source">
+            <option value="">Select...</option>
+            <option>Indeed</option><option>LinkedIn</option><option>ZipRecruiter</option>
+            <option>Facebook</option><option>Upwork</option><option>OnlineJobs.ph</option>
+            <option>Workana</option><option>Craigslist</option><option>Employee Referral</option><option>Other</option>
+          </select>
+        </div>
+        <div class="fg"><label>Compensation Expectation</label><input id="f-comp" placeholder="e.g. $18/hr or $45,000/yr"></div>
+        <div class="fg"><label>Availability to Start</label><input id="f-avail" placeholder="e.g. Immediately / 2 weeks"></div>
+      </div>
+      <div class="fg"><label>Video Introduction Link <span class="req">*</span></label><input id="f-video" placeholder="Loom, YouTube, or Google Drive link to a 60-sec intro video">
+        <div class="hint">Record a 60-second video introducing yourself and why you want this role. Free at loom.com</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Your Background</div>
+      <div class="fg">
+        <label>Resume / CV <span class="req">*</span></label>
+        <div class="resume-upload" id="resume-upload-zone" onclick="document.getElementById('f-resume-file').click()">
+          <input type="file" id="f-resume-file" accept=".pdf,.doc,.docx,.txt" style="display:none" onchange="handleResumeUpload(event)">
+          <div class="resume-upload-icon">📎</div>
+          <div class="resume-upload-txt" id="resume-upload-txt">Click to upload resume (PDF, Word, or text)</div>
+          <div class="resume-upload-sub">or paste your details in the text box below</div>
+        </div>
+        <div id="drive-link-hint" style="display:none;background:rgba(46,125,50,0.08);border:1px solid rgba(46,125,50,0.25);border-radius:8px;padding:10px 14px;font-size:12px;color:#2E7D32;margin-bottom:8px">
+          📎 File selected. For best results, also paste a <strong>Google Drive link</strong> to your resume below so our team can open it directly.
+        </div>
+        <input id="f-resume-link" placeholder="Google Drive or Dropbox link to your resume (optional)" style="background:#fff;border:1px solid #D0E0D0;border-radius:8px;padding:9px 12px;color:#1A2E1A;font-size:13px;font-family:DM Sans,sans-serif;width:100%;margin-bottom:8px">
+        <textarea id="f-resume" placeholder="Or paste your resume text here — work history, skills, education..."></textarea>
+      </div>
+      <div class="fg"><label>Relevant Experience <span class="req">*</span></label>
+        <textarea id="f-q1" placeholder="How many years of experience do you have in this field? What specific skills or services have you performed?"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Situational Questions</div>
+      <div class="fg"><label>Tell us about a time you dealt with a difficult customer or client situation. What happened and how did you handle it? <span class="req">*</span></label>
+        <textarea id="f-q2" placeholder="Your answer..."></textarea>
+      </div>
+      <div class="fg"><label>Why do you want to work at Wise House specifically? <span class="req">*</span></label>
+        <textarea id="f-q3" placeholder="Your answer..."></textarea>
+      </div>
+    </div>
+
+    <div class="thinking" id="thinking">
+      <div class="spin"></div>
+      Submitting your application...
+    </div>
+
+    <button class="submit-btn" id="submit-btn" onclick="submitApp()">Submit Application</button>
+  </div>
+
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon">🎉</div>
+    <div class="success-title">Application Received!</div>
+    <div class="success-sub">Thanks for applying to Wise House. Our team will review your application and get back to you within 2 business days.<br><br>Keep an eye on your email inbox.</div>
+  </div>
+</div>
+
+<script>
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyYsZY_YcqEn7z3Gdts2Qh_c1vWEzf_vnJ17I_VZMe8B5Z-XnoOOdNfQtpc_kXiSZva/exec';
+const API_KEY   = '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';
+let selectedRole = '';
+
+function selectRole(el, role) {
+  document.querySelectorAll('.role-pill').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedRole = role;
+  document.getElementById('f-role').value = role;
+}
+
+function handleResumeUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const zone = document.getElementById('resume-upload-zone');
+  const txt = document.getElementById('resume-upload-txt');
+  zone.classList.add('has-file');
+  txt.textContent = '✓ ' + file.name + ' ready to submit';
+  // Read file as text if possible
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const content = ev.target.result;
+    const current = document.getElementById('f-resume').value.trim();
+    if (!current) {
+      document.getElementById('f-resume').value = content;
+    }
+  };
+  if (file.type === 'text/plain') {
+    reader.readAsText(file);
+  } else {
+    // For PDF/Word: prompt candidate to also share a Google Drive link
+    const current = document.getElementById('f-resume').value.trim();
+    if (!current) {
+      document.getElementById('f-resume').value = '';
+    }
+    // Show Drive link prompt below upload zone
+    const hint = document.getElementById('drive-link-hint');
+    if (hint) hint.style.display = 'block';
+  }
+}
+
+async function submitApp() {
+  const errB = document.getElementById('err-b');
+  errB.style.display = 'none';
+
+  // Validate
+  const name   = document.getElementById('f-name').value.trim();
+  const email  = document.getElementById('f-email').value.trim();
+  const source = document.getElementById('f-source').value;
+  const resume = document.getElementById('f-resume').value.trim();
+
+  if (!selectedRole) {
+    errB.textContent = 'Please select a role at the top of the form.';
+    errB.style.display = 'block';
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+  if (!name) {
+    errB.textContent = 'Please enter your full name.';
+    errB.style.display = 'block';
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+  if (!email) {
+    errB.textContent = 'Please enter your email address.';
+    errB.style.display = 'block';
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+  if (!source) {
+    errB.textContent = 'Please tell us where you found this job.';
+    errB.style.display = 'block';
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+  if (!resume) {
+    errB.textContent = 'Please paste your resume or describe your background.';
+    errB.style.display = 'block';
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+
+  const q1 = document.getElementById('f-q1').value.trim();
+  const q2 = document.getElementById('f-q2').value.trim();
+  const q3 = document.getElementById('f-q3').value.trim();
+  const video = document.getElementById('f-video').value.trim();
+
+  if (!q1) {
+    errB.textContent = 'Please answer the Relevant Experience question.';
+    errB.style.display = 'block';
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+  if (!q2) {
+    errB.textContent = 'Please answer the customer situation question.';
+    errB.style.display = 'block';
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+  if (!q3) {
+    errB.textContent = 'Please tell us why you want to work at Wise House.';
+    errB.style.display = 'block';
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+  if (!video) {
+    errB.textContent = 'Please provide a video introduction link (Loom, YouTube, or Google Drive).';
+    errB.style.display = 'block';
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+
+  // Disable button and show loading
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  const candidate = {
+    id: Date.now().toString(),
+    name, email,
+    phone:        document.getElementById('f-phone').value.trim(),
+    role:         selectedRole,
+    source,
+    comp:         document.getElementById('f-comp').value.trim(),
+    availability: document.getElementById('f-avail').value.trim(),
+    video:        document.getElementById('f-video').value.trim(),
+    resume: (document.getElementById('f-resume-link').value.trim() || document.getElementById('f-resume').value.trim()),
+    q1:           document.getElementById('f-q1').value.trim(),
+    q2:           document.getElementById('f-q2').value.trim(),
+    q3:           document.getElementById('f-q3').value.trim(),
+    notes:        '',
+    stage:        'Applied',
+    added:        new Date().toISOString(),
+    score:        '', tier: '', summary: '', strengths: '',
+    concerns: '', flags: '', comp_note: '', screen_questions: ''
+  };
+
+  // Step 1: Save to Google Sheet immediately (no-cors required for Apps Script)
+  try {
+    await fetch(SHEET_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({ action: 'add', ...candidate }),
+    });
+  } catch(e) {
+    console.error('Sheet error:', e);
+  }
+
+  // Step 2: Show success right away — don't wait for AI scoring
+  document.getElementById('form-wrap').style.display = 'none';
+  document.getElementById('success-screen').style.display = 'block';
+  window.scrollTo(0, 0);
+
+  // Step 3: Score with Claude in the background and update the sheet
+  try {
+    const aiReport = await Promise.race([
+      scoreWithClaude(candidate),
+      new Promise((_,rej) => setTimeout(() => rej(new Error('timeout')), 20000))
+    ]);
+    if (aiReport) {
+      await fetch(SHEET_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({
+          action: 'update',
+          id: candidate.id,
+          score:            aiReport.score,
+          tier:             aiReport.tier || '',
+          summary:          aiReport.summary || '',
+          strengths:        (aiReport.strengths || []).join(' | '),
+          concerns:         (aiReport.concerns || []).join(' | '),
+          flags:            (aiReport.flags || []).join(' | '),
+          comp_note:        aiReport.comp_note || '',
+          screen_questions: (aiReport.screen_questions || []).join(' | '),
+          stage:            autoStage(aiReport.score),
+        }),
+      });
+    }
+  } catch(e) { console.error('Background scoring failed:', e); }
+}
+
+async function scoreWithClaude(c) {
+  const p = `You are a recruiting assistant for Wise House Pest Control. Score this ${c.role} candidate.
+Name: ${c.name} | Source: ${c.source} | Comp: ${c.comp||'?'} | Available: ${c.availability||'?'}
+Resume: ${c.resume||'N/A'} | Experience: ${c.q1||'N/A'} | Customer scenario: ${c.q2||'N/A'} | Motivation: ${c.q3||'N/A'} | Video: ${c.video||'N/A'}
+Score 100pts: experience(25)+communication(20)+motivation(15)+reliability(15)+availability(15)+bonus(10). Be fair, never reject.
+Return ONLY valid JSON no markdown:
+{"score":75,"breakdown":{"experience":18,"communication":15,"motivation":12,"reliability":13,"availability":12,"bonus":5},"tier":"Advance","summary":"3-sentence summary.","strengths":["s1","s2"],"concerns":["c1","c2"],"flags":["f1"],"comp_note":"In range","screen_questions":["q1","q2","q3"]}`;
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json','x-api-key':API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' },
+    body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:900, messages:[{ role:'user', content:p }] })
+  });
+  const d = await r.json();
+  return JSON.parse((d.content?.[0]?.text||'').replace(/```json|```/g,'').trim());
+}
+
+function autoStage(score) {
+  if (score >= 70) return 'Screening';
+  if (score >= 55) return 'Bench';
+  return 'Archived';
+}
+</script>
+</body>
+</html>
