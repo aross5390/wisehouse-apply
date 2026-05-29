@@ -251,6 +251,13 @@ async function submitApp() {
     window.scrollTo({top:0,behavior:'smooth'});
     return;
   }
+  if (!video.startsWith('http://') && !video.startsWith('https://')) {
+    errB.textContent = 'Video Introduction Link must be a valid URL starting with https:// (e.g. a Loom, YouTube, or Google Drive link).';
+    errB.style.display = 'block';
+    document.getElementById('f-video').focus();
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
 
   // Disable button and show loading
   const btn = document.getElementById('submit-btn');
