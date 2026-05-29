@@ -78,12 +78,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
         <div class="fg"><label>Email <span class="req">*</span></label><input id="f-email" type="email" placeholder="your@email.com"></div>
         <div class="fg"><label>Phone Number</label><input id="f-phone" placeholder="+1 555 000 0000"></div>
         <div class="fg"><label>Where did you find this job? <span class="req">*</span></label>
-          <select id="f-source">
+          <select id="f-source" onchange="toggleReferral(this.value)">
             <option value="">Select...</option>
             <option>Indeed</option><option>LinkedIn</option><option>ZipRecruiter</option>
             <option>Facebook</option><option>Upwork</option><option>OnlineJobs.ph</option>
             <option>Workana</option><option>Craigslist</option><option>Employee Referral</option><option>Other</option>
           </select>
+        </div>
+        <div class="fg" id="referral-wrap" style="display:none">
+          <label>Who referred you? <span class="req">*</span></label>
+          <input id="f-referral" placeholder="Full name of the Wise House employee who referred you">
         </div>
         <div class="fg"><label>Compensation Expectation</label><input id="f-comp" placeholder="e.g. $18/hr or $45,000/yr"></div>
         <div class="fg"><label>Availability to Start</label><input id="f-avail" placeholder="e.g. Immediately / 2 weeks"></div>
@@ -96,18 +100,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
     <div class="card">
       <div class="card-title">Your Background</div>
       <div class="fg">
-        <label>Resume / CV <span class="req">*</span></label>
-        <div class="resume-upload" id="resume-upload-zone" onclick="document.getElementById('f-resume-file').click()">
-          <input type="file" id="f-resume-file" accept=".pdf,.doc,.docx,.txt" style="display:none" onchange="handleResumeUpload(event)">
-          <div class="resume-upload-icon">📎</div>
-          <div class="resume-upload-txt" id="resume-upload-txt">Click to upload resume (PDF, Word, or text)</div>
-          <div class="resume-upload-sub">or paste your details in the text box below</div>
-        </div>
-        <div id="drive-link-hint" style="display:none;background:rgba(46,125,50,0.08);border:1px solid rgba(46,125,50,0.25);border-radius:8px;padding:10px 14px;font-size:12px;color:#2E7D32;margin-bottom:8px">
-          📎 File selected. For best results, also paste a <strong>Google Drive link</strong> to your resume below so our team can open it directly.
-        </div>
-        <input id="f-resume-link" placeholder="Google Drive or Dropbox link to your resume (optional)" style="background:#fff;border:1px solid #D0E0D0;border-radius:8px;padding:9px 12px;color:#1A2E1A;font-size:13px;font-family:DM Sans,sans-serif;width:100%;margin-bottom:8px">
-        <textarea id="f-resume" placeholder="Or paste your resume text here — work history, skills, education..."></textarea>
+        <label>Resume / CV Link <span class="req">*</span></label>
+        <input id="f-resume-link" placeholder="Paste a Google Drive, Dropbox, or OneDrive link to your resume..." style="background:#fff;border:1px solid #D0E0D0;border-radius:8px;padding:11px 14px;color:#1A2E1A;font-size:13px;font-family:'DM Sans',sans-serif;width:100%;margin-bottom:6px">
+        <div style="font-size:11px;color:#7A9A78;margin-bottom:10px">Upload your resume to Google Drive → right-click → Share → Anyone with the link → Copy link. Then paste it above.</div>
+        <div style="font-size:12px;font-weight:500;color:#4A6741;margin-bottom:6px">No link? Paste your resume text below instead:</div>
+        <textarea id="f-resume" placeholder="Paste your work history, skills, and education here..."></textarea>
       </div>
       <div class="fg">
         <label id="q1-label">Relevant Experience <span class="req">*</span></label>
@@ -247,6 +244,12 @@ function handleResumeUpload(e) {
   }
 }
 
+function toggleReferral(val) {
+  const wrap = document.getElementById('referral-wrap');
+  wrap.style.display = val === 'Employee Referral' ? 'block' : 'none';
+  if (val !== 'Employee Referral') document.getElementById('f-referral').value = '';
+}
+
 async function submitApp() {
   const errB = document.getElementById('err-b');
   errB.style.display = 'none';
@@ -281,8 +284,16 @@ async function submitApp() {
     window.scrollTo({top:0,behavior:'smooth'});
     return;
   }
-  if (!resume) {
-    errB.textContent = 'Please paste your resume or describe your background.';
+  const referredBy = document.getElementById('f-referral').value.trim();
+  if (source === 'Employee Referral' && !referredBy) {
+    errB.textContent = 'Please enter the name of the Wise House employee who referred you.';
+    errB.style.display = 'block';
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+  const resumeLink = document.getElementById('f-resume-link').value.trim();
+  if (!resume && !resumeLink) {
+    errB.textContent = 'Please provide your resume — either paste a Google Drive link or paste your resume text below it.';
     errB.style.display = 'block';
     window.scrollTo({top:0,behavior:'smooth'});
     return;
@@ -343,7 +354,7 @@ async function submitApp() {
     q1:           document.getElementById('f-q1').value.trim(),
     q2:           document.getElementById('f-q2').value.trim(),
     q3:           document.getElementById('f-q3').value.trim(),
-    notes:        '',
+    notes:        referredBy ? 'Referred by: ' + referredBy : '',
     stage:        'Applied',
     added:        new Date().toISOString(),
     score:        '', tier: '', summary: '', strengths: '',
