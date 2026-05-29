@@ -109,17 +109,20 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
         <input id="f-resume-link" placeholder="Google Drive or Dropbox link to your resume (optional)" style="background:#fff;border:1px solid #D0E0D0;border-radius:8px;padding:9px 12px;color:#1A2E1A;font-size:13px;font-family:DM Sans,sans-serif;width:100%;margin-bottom:8px">
         <textarea id="f-resume" placeholder="Or paste your resume text here — work history, skills, education..."></textarea>
       </div>
-      <div class="fg"><label>Relevant Experience <span class="req">*</span></label>
-        <textarea id="f-q1" placeholder="How many years of experience do you have in this field? What specific skills or services have you performed?"></textarea>
+      <div class="fg">
+        <label id="q1-label">Relevant Experience <span class="req">*</span></label>
+        <textarea id="f-q1" id="f-q1" placeholder="How many years of experience do you have in this field? What specific skills or services have you performed?"></textarea>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title">Situational Questions</div>
-      <div class="fg"><label>Tell us about a time you dealt with a difficult customer or client situation. What happened and how did you handle it? <span class="req">*</span></label>
+    <div class="card" id="questions-card">
+      <div class="card-title" id="questions-title">Situational Questions</div>
+      <div id="q2-wrap" class="fg">
+        <label id="q2-label">Tell us about a time you dealt with a difficult customer or client situation. What happened and how did you handle it? <span class="req">*</span></label>
         <textarea id="f-q2" placeholder="Your answer..."></textarea>
       </div>
-      <div class="fg"><label>Why do you want to work at Wise House specifically? <span class="req">*</span></label>
+      <div id="q3-wrap" class="fg">
+        <label id="q3-label">Why do you want to work at Wise House specifically? <span class="req">*</span></label>
         <textarea id="f-q3" placeholder="Your answer..."></textarea>
       </div>
     </div>
@@ -149,6 +152,69 @@ function selectRole(el, role) {
   el.classList.add('selected');
   selectedRole = role;
   document.getElementById('f-role').value = role;
+  updateQuestions(role);
+}
+
+function updateQuestions(role) {
+  const q1Label = document.getElementById('q1-label');
+  const q2Label = document.getElementById('q2-label');
+  const q3Label = document.getElementById('q3-label');
+  const q1 = document.getElementById('f-q1');
+  const q2 = document.getElementById('f-q2');
+  const q3 = document.getElementById('f-q3');
+  const title = document.getElementById('questions-title');
+
+  title.textContent = 'Role-Specific Questions';
+
+  if (role === 'Pest Control Technician') {
+    q1Label.innerHTML = 'How many years of pest control experience do you have? What services have you performed? (e.g. general household pests, termites, rodents, lawn, mosquito) <span class="req">*</span>';
+    q1.placeholder = 'e.g. 2 years at Terminix performing general household pest treatments, rodent exclusions, and termite inspections across Palm Beach County...';
+    q2Label.innerHTML = 'Do you have a valid Florida driver\u2019s license and reliable transportation? Are you comfortable working in attics, on rooftops, and lifting 50+ lbs? <span class="req">*</span>';
+    q2.placeholder = 'Yes / No and any relevant details...';
+    q3Label.innerHTML = 'Tell us about a time you dealt with a difficult or upset customer on the job. What happened and how did you handle it? <span class="req">*</span>';
+    q3.placeholder = 'Your answer...';
+
+  } else if (role === 'Outbound Sales Rep') {
+    q1Label.innerHTML = 'How many years of sales experience do you have? Have you sold pest control, home services, or similar? What was your average deal size and close rate? <span class="req">*</span>';
+    q1.placeholder = 'e.g. 4 years in pest control sales at Massey Services. Average deal size $2,800. Close rate on outbound inspections around 55%...';
+    q2Label.innerHTML = 'A homeowner says your quote is too expensive and they need to think about it. What do you say next — word for word? <span class="req">*</span>';
+    q2.placeholder = 'Walk us through your objection handling response...';
+    q3Label.innerHTML = 'Have you used GorillaDesk, ServiceTitan, or any other field service CRM? If yes, which ones and how did you use them? <span class="req">*</span>';
+    q3.placeholder = 'e.g. Used GorillaDesk daily for scheduling, pipeline tracking, and customer notes. Also familiar with ServiceTitan...';
+
+  } else if (role === 'CSR / Admin Support') {
+    q1Label.innerHTML = 'Have you worked for a US-based company before? Describe the role, how long you were there, and what your main responsibilities were. <span class="req">*</span>';
+    q1.placeholder = 'e.g. 2 years as a remote CSR for CoolAir Solutions in Florida — handled inbound calls, scheduling, and dispatch coordination for 12 field technicians...';
+    q2Label.innerHTML = 'A customer calls upset — a technician was 2 hours late and nobody called them. Walk us through how you handle this call from start to finish. <span class="req">*</span>';
+    q2.placeholder = 'Your answer...';
+    q3Label.innerHTML = 'Have you used GorillaDesk, ServiceTitan, HouseCall Pro, or any scheduling/CRM tool? Have you worked with AI tools or LLMs (like ChatGPT or Claude) in a work setting? <span class="req">*</span>';
+    q3.placeholder = 'e.g. Used ServiceTitan for 2 years for scheduling and invoicing. Also use ChatGPT daily to draft customer emails and summarize call notes...';
+
+  } else if (role === 'Video Editor') {
+    q1Label.innerHTML = 'What editing software do you use? Describe your workflow from receiving raw footage to final delivery. How many short-form videos can you deliver per week consistently? <span class="req">*</span>';
+    q1.placeholder = 'e.g. Edit in CapCut and Premiere Pro. Typical turnaround is 24 hours for a 60-second reel. Can deliver 15-20 videos per week consistently...';
+    q2Label.innerHTML = 'Share a link to your portfolio — at least 3 examples of short-form or social media content you have edited. Instagram Reels, TikTok, or YouTube Shorts preferred. <span class="req">*</span>';
+    q2.placeholder = 'e.g. https://drive.google.com/... or a link to your portfolio page...';
+    q3Label.innerHTML = 'Have you edited content for home services, pest control, trades, or similar industries? Describe the type of content and the results it achieved. <span class="req">*</span>';
+    q3.placeholder = 'e.g. Edited 20+ Reels for a roofing company in Texas. Their best-performing video got 180k views. Also worked with a home cleaning brand in Miami...';
+
+  } else if (role === 'AI Implementation Specialist') {
+    q1Label.innerHTML = 'Describe the most complex automation or AI workflow you have ever built — the problem, tools used, architecture, challenges, and measurable outcome. <span class="req">*</span>';
+    q1.placeholder = 'e.g. Built a lead qualification and follow-up automation for a pest control company using GorillaDesk API, Make.com, and Claude API. Reduced manual follow-up by 80%...';
+    q2Label.innerHTML = 'What AI and automation tools do you use regularly? Rate your proficiency in: Make.com, n8n, Zapier, Claude API, OpenAI API, REST APIs, webhooks, LLMs in general. <span class="req">*</span>';
+    q2.placeholder = 'e.g. Make.com (Advanced), Claude API (Advanced), n8n (Intermediate), Zapier (Intermediate), REST APIs (Advanced), OpenAI (Advanced)...';
+    q3Label.innerHTML = 'We use GorillaDesk as our CRM. We want to automate: (1) follow-up messages after service, (2) lead qualification from web forms, and (3) tech scheduling notifications. How would you approach this and what tools would you use? <span class="req">*</span>';
+    q3.placeholder = 'Walk us through your approach, tools you would choose, and why...';
+
+  } else {
+    title.textContent = 'Situational Questions';
+    q1Label.innerHTML = 'Relevant Experience <span class="req">*</span>';
+    q1.placeholder = 'How many years of experience do you have in this field? What specific skills or services have you performed?';
+    q2Label.innerHTML = 'Tell us about a time you dealt with a difficult customer or client situation. What happened and how did you handle it? <span class="req">*</span>';
+    q2.placeholder = 'Your answer...';
+    q3Label.innerHTML = 'Why do you want to work at Wise House specifically? <span class="req">*</span>';
+    q3.placeholder = 'Your answer...';
+  }
 }
 
 function handleResumeUpload(e) {
@@ -234,13 +300,13 @@ async function submitApp() {
     return;
   }
   if (!q2) {
-    errB.textContent = 'Please answer the customer situation question.';
+    errB.textContent = 'Please answer the second question.';
     errB.style.display = 'block';
     window.scrollTo({top:0,behavior:'smooth'});
     return;
   }
   if (!q3) {
-    errB.textContent = 'Please tell us why you want to work at Wise House.';
+    errB.textContent = 'Please answer the third question.';
     errB.style.display = 'block';
     window.scrollTo({top:0,behavior:'smooth'});
     return;
