@@ -30,6 +30,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
 .fg select option{background:var(--surf2)}
 .fg textarea{resize:vertical;min-height:90px;line-height:1.6}
 .hint{font-size:11px;color:var(--tx3);margin-top:3px;line-height:1.5}
+.cv-drag{border-color:#2E7D32 !important;background:rgba(46,125,50,0.06) !important}
 .submit-btn{width:100%;padding:14px;background:var(--blue);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.1s;margin-top:8px}
 .submit-btn:hover{background:#1D4ED8}
 .submit-btn:disabled{background:#334155;cursor:not-allowed}
@@ -100,11 +101,37 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
     <div class="card">
       <div class="card-title">Your Background</div>
       <div class="fg">
-        <label>Resume / CV Link <span class="req">*</span></label>
-        <input id="f-resume-link" placeholder="Paste a Google Drive, Dropbox, or OneDrive link to your resume..." style="background:#fff;border:1px solid #D0E0D0;border-radius:8px;padding:11px 14px;color:#1A2E1A;font-size:13px;font-family:'DM Sans',sans-serif;width:100%;margin-bottom:6px">
-        <div style="font-size:11px;color:#7A9A78;margin-bottom:10px">Upload your resume to Google Drive → right-click → Share → Anyone with the link → Copy link. Then paste it above.</div>
-        <div style="font-size:12px;font-weight:500;color:#4A6741;margin-bottom:6px">No link? Paste your resume text below instead:</div>
-        <textarea id="f-resume" placeholder="Paste your work history, skills, and education here..."></textarea>
+        <label>Resume / CV <span class="req">*</span></label>
+
+        <!-- Upload Zone -->
+        <div id="cv-upload-zone" style="border:2px dashed #B0CCB0;border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;background:#F4F8F4;transition:all 0.2s;margin-bottom:10px;position:relative" onclick="document.getElementById('cv-file-input').click()" ondragover="cvDragOver(event)" ondragleave="cvDragLeave(event)" ondrop="cvDrop(event)">
+          <input type="file" id="cv-file-input" accept=".pdf,.doc,.docx" style="display:none" onchange="handleCVUpload(event)">
+          <div id="cv-upload-icon" style="font-size:36px;margin-bottom:8px">📄</div>
+          <div id="cv-upload-title" style="font-size:14px;font-weight:600;color:#1B4332;margin-bottom:4px">Drop your resume here or click to upload</div>
+          <div id="cv-upload-sub" style="font-size:12px;color:#7A9A78">PDF or Word document accepted</div>
+          <div id="cv-upload-progress" style="display:none;margin-top:12px">
+            <div style="height:4px;background:#D0E0D0;border-radius:4px;overflow:hidden">
+              <div id="cv-progress-bar" style="height:100%;background:#2E7D32;border-radius:4px;width:0;transition:width 0.3s"></div>
+            </div>
+            <div id="cv-progress-txt" style="font-size:11px;color:#2E7D32;margin-top:5px">Uploading...</div>
+          </div>
+        </div>
+
+        <!-- Success state -->
+        <div id="cv-success" style="display:none;background:rgba(46,125,50,0.08);border:1px solid rgba(46,125,50,0.3);border-radius:10px;padding:12px 16px;display:none;align-items:center;gap:10px;margin-bottom:10px">
+          <span style="font-size:20px">✅</span>
+          <div style="flex:1">
+            <div id="cv-filename" style="font-size:13px;font-weight:600;color:#1B4332"></div>
+            <div style="font-size:11px;color:#2E7D32">Resume uploaded successfully</div>
+          </div>
+          <button onclick="clearCV()" style="background:none;border:none;cursor:pointer;color:#7A9A78;font-size:18px;padding:0 4px" title="Remove">✕</button>
+        </div>
+
+        <div style="text-align:center;font-size:12px;color:#7A9A78;margin:8px 0">— or paste a link instead —</div>
+
+        <input id="f-resume-link" placeholder="Google Drive, Dropbox, or OneDrive link to your resume..." style="background:#fff;border:1px solid #D0E0D0;border-radius:8px;padding:10px 13px;color:#1A2E1A;font-size:13px;font-family:'DM Sans',sans-serif;width:100%">
+        <input type="hidden" id="f-resume" value="">
+        <input type="hidden" id="cv-upload-url" value="">
       </div>
       <div class="fg">
         <label id="q1-label">Relevant Experience <span class="req">*</span></label>
@@ -140,7 +167,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-h
 </div>
 
 <script>
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzcpBZBvKIopGSPdegORWGZXeY6KD6G5mnNPOnqqXVswNNHANMqv1aLmnpBom4iPg1C/exec';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwQGwNogl1KnwKQFnmFUjGV6B07-0eKvE-QZmtW9hHyG0XlZBTDuKpJ7_m3cx2tZOrh/exec';
 
 let selectedRole = '';
 
@@ -244,6 +271,83 @@ function handleResumeUpload(e) {
   }
 }
 
+// ── CV UPLOAD ─────────────────────────────────
+function cvDragOver(e) { e.preventDefault(); document.getElementById('cv-upload-zone').classList.add('cv-drag'); }
+function cvDragLeave(e) { document.getElementById('cv-upload-zone').classList.remove('cv-drag'); }
+function cvDrop(e) { e.preventDefault(); document.getElementById('cv-upload-zone').classList.remove('cv-drag'); const f = e.dataTransfer.files[0]; if(f) processCV(f); }
+function handleCVUpload(e) { const f = e.target.files[0]; if(f) processCV(f); }
+
+function clearCV() {
+  document.getElementById('cv-upload-url').value = '';
+  document.getElementById('cv-success').style.display = 'none';
+  document.getElementById('cv-upload-zone').style.display = 'block';
+  document.getElementById('cv-file-input').value = '';
+}
+
+async function processCV(file) {
+  const zone = document.getElementById('cv-upload-zone');
+  const progress = document.getElementById('cv-upload-progress');
+  const bar = document.getElementById('cv-progress-bar');
+  const txt = document.getElementById('cv-progress-txt');
+  const success = document.getElementById('cv-success');
+
+  // Show progress
+  progress.style.display = 'block';
+  txt.textContent = 'Reading file...';
+  let pct = 0;
+  const tick = setInterval(() => { pct = Math.min(pct + 15, 85); bar.style.width = pct + '%'; }, 200);
+
+  try {
+    // Convert to base64
+    const b64 = await new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res(r.result.split(',')[1]);
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+
+    txt.textContent = 'Uploading to Drive...';
+
+    txt.textContent = 'Uploading to Drive...';
+
+    // Send to Apps Script to save to Google Drive
+    const resp = await fetch('https://script.google.com/macros/s/AKfycbwQGwNogl1KnwKQFnmFUjGV6B07-0eKvE-QZmtW9hHyG0XlZBTDuKpJ7_m3cx2tZOrh/exec', {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'uploadFile',
+        filename: file.name,
+        mimeType: file.type || 'application/octet-stream',
+        data: b64
+      })
+    });
+
+    const result = await resp.json();
+    clearInterval(tick);
+    bar.style.width = '100%';
+
+    if (result.success && result.url) {
+      txt.textContent = 'Upload complete!';
+      document.getElementById('cv-upload-url').value = result.url;
+      document.getElementById('f-resume-link').value = result.url;
+      document.getElementById('cv-filename').textContent = file.name;
+      setTimeout(() => {
+        progress.style.display = 'none';
+        zone.style.display = 'none';
+        success.style.display = 'flex';
+      }, 500);
+    } else {
+      throw new Error(result.error || 'Upload failed');
+    }
+
+  } catch(e) {
+    clearInterval(tick);
+    progress.style.display = 'none';
+    txt.textContent = '';
+    bar.style.width = '0';
+    alert('Upload failed. Please paste a link instead.');
+  }
+}
+
 function toggleReferral(val) {
   const wrap = document.getElementById('referral-wrap');
   wrap.style.display = val === 'Employee Referral' ? 'block' : 'none';
@@ -292,8 +396,15 @@ async function submitApp() {
     return;
   }
   const resumeLink = document.getElementById('f-resume-link').value.trim();
-  if (!resume && !resumeLink) {
-    errB.textContent = 'Please provide your resume — either paste a Google Drive link or paste your resume text below it.';
+  const cvUploadUrl = document.getElementById('cv-upload-url').value.trim();
+  if (!resumeLink && !cvUploadUrl) {
+    errB.textContent = 'Please upload your resume or paste a link to it.';
+    errB.style.display = 'block';
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+  if (resumeLink && !resumeLink.startsWith('http://') && !resumeLink.startsWith('https://')) {
+    errB.textContent = 'Resume link must be a valid URL starting with https://';
     errB.style.display = 'block';
     window.scrollTo({top:0,behavior:'smooth'});
     return;
@@ -350,7 +461,7 @@ async function submitApp() {
     comp:         document.getElementById('f-comp').value.trim(),
     availability: document.getElementById('f-avail').value.trim(),
     video:        document.getElementById('f-video').value.trim(),
-    resume: (document.getElementById('f-resume-link').value.trim() || document.getElementById('f-resume').value.trim()),
+    resume: (document.getElementById('f-resume-link').value.trim() || document.getElementById('cv-upload-url').value.trim()),
     q1:           document.getElementById('f-q1').value.trim(),
     q2:           document.getElementById('f-q2').value.trim(),
     q3:           document.getElementById('f-q3').value.trim(),
@@ -361,23 +472,19 @@ async function submitApp() {
     concerns: '', flags: '', comp_note: '', screen_questions: ''
   };
 
-  // Step 1: Save to Google Sheet immediately (no-cors required for Apps Script)
+  // Step 1: Save to Google Sheet (Apps Script fires Slack webhook server-side)
   try {
     await fetch(SHEET_URL, {
       method: 'POST',
-      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify({ action: 'add', ...candidate }),
     });
   } catch(e) { console.error('Sheet error:', e); }
 
-  // Webhook handled server-side by Apps Script
-
-  // Show success
+  // Step 2: Show success immediately
   document.getElementById('form-wrap').style.display = 'none';
   document.getElementById('success-screen').style.display = 'block';
   window.scrollTo(0, 0);
-
-  // Step 3: Score with Claude in the background and update the sheet
 }
 
 
