@@ -466,6 +466,7 @@ async function submitApp() {
     q2:           document.getElementById('f-q2').value.trim(),
     q3:           document.getElementById('f-q3').value.trim(),
     notes:        referredBy ? 'Referred by: ' + referredBy : '',
+    sendAssessment: ['Outbound Sales Rep', 'CSR / Admin Support', 'Video Editor', 'AI Implementation Specialist'].includes(selectedRole),
     stage:        'Applied',
     added:        new Date().toISOString(),
     score:        '', tier: '', summary: '', strengths: '',
